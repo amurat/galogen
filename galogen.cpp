@@ -885,10 +885,18 @@ public:
 #ifdef CHECK_ERROR
       if (command.name != "glGetError") {
         fprintf(output_c_,
-                "%s _glptr_%s(%s);\n  CHECK_ERROR();\n}\n",
+                "%s _glptr_%s(%s);\n  CHECK_ERROR();\n",
                 command.return_ctype != "void" ? "return" : "",
                 command.name.c_str(),
                 parameter_list_call.c_str());
+         fprintf(output_c_, // Definition of the function pointer.
+            "  _glptr_%s = _impl_%s;\n",
+            command.name.c_str(),
+            command.name.c_str());
+        fprintf(output_c_,
+                "}\n"
+        );
+
       } else {
               fprintf(output_c_,
               "%s _glptr_%s(%s);\n}\n",
