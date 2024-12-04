@@ -995,9 +995,12 @@ const char *source_preamble = R"STR(
 void* GalogenGetProcAddress(const char *name) {
   static HMODULE opengl32module = NULL;
   static PROC(WINAPI *wgl_get_proc_address)(LPCSTR name) = NULL;
+  char* gles = getenv("GLES");
+  const char* path = gles ? "libGLESv2.dll" : "libGL.dylib";
+
   if (!wgl_get_proc_address) {
     if (!opengl32module) {
-      opengl32module = LoadLibraryA("opengl32.dll");
+      opengl32module = LoadLibraryA(path);
     }
     wgl_get_proc_address = (PROC(WINAPI*)(LPCSTR))GetProcAddress(opengl32module, "wglGetProcAddress");
     assert(wgl_get_proc_address);
@@ -1006,7 +1009,7 @@ void* GalogenGetProcAddress(const char *name) {
   if(ptr == 0 || (ptr == (void*)1) || (ptr == (void*)2) || (ptr == (void*)3) ||
      (ptr == (void*)-1) ) {
     if (opengl32module == NULL) {
-      opengl32module = LoadLibraryA("opengl32.dll");
+      opengl32module = LoadLibraryA(path);
       assert(opengl32module);
     }
     ptr = (void *)GetProcAddress(opengl32module, name);
@@ -1022,7 +1025,8 @@ void* GalogenGetProcAddress(const char *name) {
 static void* GalogenGetProcAddress(const char *name)
 {
     static void* lib = NULL;
-    char* path = "libGLESv2.dylib";
+    char* glcore = getenv("GLCORE");
+    const char* path = glcore ? "/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL" : "libGLESv2.dylib";
     if (NULL == lib)
       lib = dlopen(
         path,
