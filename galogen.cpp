@@ -996,7 +996,7 @@ void* GalogenGetProcAddress(const char *name) {
   static HMODULE opengl32module = NULL;
   static PROC(WINAPI *wgl_get_proc_address)(LPCSTR name) = NULL;
   char* gles = getenv("GLES");
-  const char* path = gles ? "libGLESv2.dll" : "libGL.dylib";
+  const char* path = gles ? "libGLESv2.dll" : "opengl32.dll;
 
   if (!wgl_get_proc_address) {
     if (!opengl32module) {
