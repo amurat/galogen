@@ -998,6 +998,13 @@ void* GalogenGetProcAddress(const char *name) {
   char* gles = getenv("GLES");
   const char* path = gles ? "libGLESv2.dll" : "opengl32.dll";
 
+  if (gles) {
+    if (!opengl32module) {
+      opengl32module = LoadLibraryA(path);
+    }
+    void *ptr = (void *)GetProcAddress(opengl32module, name);
+    return ptr;
+  }
   if (!wgl_get_proc_address) {
     if (!opengl32module) {
       opengl32module = LoadLibraryA(path);
